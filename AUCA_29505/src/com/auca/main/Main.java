@@ -33,25 +33,14 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
-/**
- * AUCA_ID School Management System - console application entry point.
- *
- * Design notes:
- *  - ONE shared Scanner (System.in); every read is a full nextLine() that is then parsed explicitly.
- *  - Every registration form is described by a small table of field specs (step, key, label, hint, rule)
- *    and run by ONE generic engine (workflow). This gives all 11 entities the same 4-step design:
- *    steps 1-3 collect fields, step 4 reviews / edits / saves.
- *  - Related objects are chosen from numbered lists of real saved records, never typed as raw IDs.
- *  - Records live in typed ArrayLists. Nothing is stored until the final Save passes every check.
- *  - Helper methods are private; the only public method is main (all business operations live in the interfaces).
- */
+
 public class Main {
 
     private static final Scanner SC = new Scanner(System.in);
 
     private static final String[] ENTITIES = {"Department", "Student", "Teacher", "Administrator", "Course",
             "Classroom", "Enrollment", "Assessment", "FeePayment", "LibraryBook", "BookLoan"};
-    /** Keys whose value must be unique across ALL entities' getId(). */
+   
     private static final Set<String> ID_KEYS = Set.of("personId", "departmentId", "courseId", "classroomId",
             "enrollmentId", "assessmentId", "paymentId", "bookId", "loanId");
 
@@ -71,7 +60,6 @@ public class Main {
     private static final List<LibraryBook> books = new ArrayList<>();
     private static final List<BookLoan> loans = new ArrayList<>();
 
-    // =================================================================== entry point + menu
 
     public static void main(String[] args) {
         System.out.println("AUCA_ID School Management System  (" + Identifiable.ID_PREFIX
@@ -142,7 +130,7 @@ public class Main {
         return true;
     }
 
-    // =================================================================== basic input helpers
+    
 
     private static String readLine(String prompt) {
         System.out.print(prompt);
@@ -189,7 +177,7 @@ public class Main {
         boxLine(l + " ".repeat(Math.max(1, 58 - l.length() - r.length())) + r);
     }
 
-    // =================================================================== data access helpers
+    
 
     private static List<? extends Identifiable> allOf(String type) {
         return switch (type) {
@@ -208,7 +196,7 @@ public class Main {
         };
     }
 
-    /** Records that may be chosen as a reference: only ACTIVE enrollments, only books with stock. */
+    
     private static List<? extends Identifiable> candidates(String type) {
         return switch (type) {
             case "Enrollment" -> enrollments.stream().filter(Enrollment::isActive).toList();
@@ -282,11 +270,7 @@ public class Main {
         l.add(row(2, "advisorName", "Advisor name", "String | 2-120 chars", "text,2,120"));
     }
 
-    /**
-     * Field table: {step, key, label, hint, rule}. Rule grammar: "u:" = unique, "!" = locked on update,
-     * text,min,max | email | phone | isbn | date,past|notfuture|after:key | int,min,max|@key | dbl,pos | dbl,min,max|@key
-     * | money | enum,key | bool | ref,Type | refopt,Type | derived.
-     */
+
     private static String[][] fields(String e) {
         List<String[]> l = new ArrayList<>();
         switch (e) {
@@ -615,7 +599,7 @@ public class Main {
         System.out.println(RULE);
     }
 
-    /** Asks ONE field (or opens the selector for a reference). Returns the value, BACK or CANCEL. */
+   
     private static Object askField(String entity, int idx, String[][] fields, Map<String, Object> vals, Object self) {
         String[] f = fields[idx];
         if (ruleOf(f).startsWith("ref")) {
@@ -918,7 +902,6 @@ public class Main {
         }
     }
 
-    // =================================================================== saving, updating, cross-record rules
 
     private static String str(Map<String, Object> v, String k) {
         return (String) v.get(k);
@@ -1396,7 +1379,7 @@ public class Main {
             if (p instanceof AcademicMember m) {
                 System.out.println("      AcademicMember category: " + m.getAcademicCategory());
             }
-            p.printDetails(); // overridden chain: Student/Teacher -> AcademicMember -> Person via super.printDetails()
+            p.printDetails(); 
         }
         System.out.println("\n--- 2) List<Identifiable>: unrelated classes through one interface ---");
         List<Identifiable> things = allEntities();
